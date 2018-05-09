@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    background-color: #eee;
+}
+
+body {
+    color: #000;
+    background: #FFF;
+    font: 12px/22px Verdana, Arial, sans-serif;
+    height: 100% !important;
+}
+
+body,
+ul,
+ol,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+form,
+fieldset,
+table,
+td,
+img,
+div,
+tr {
+    margin: 0;
+    padding: 0;
+}
+
+input,
+select {
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+textarea,
+input {
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 0px;
+}
+
+li {
+    list-style-type: none;
+}
+
+img {
+    border: 0 none;
+}
+
+a:link,
+a:visited {
+    /* color: #04C; */
+    color: #333;
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+h6 {
+    font-size: 12px;
+}
+
+span {
+    display: block;
+}
+
+.logo {
+    max-height: 60px;
+}
+
+
+/* header 统一样式 */
+
+header {
+    padding-top: 20px;
+    width: 100%;
+    height: 60px;
+    background-color: #02BCAE !important;
+    text-align: left;
+}
+
+
+/* 统一button样式  */
+
+button {
+    outline: none;
+}
+
+
+/* 后退按钮 */
+
+.back {
+    position: absolute;
+    float: left;
+    line-height: 50px;
+    padding: 0px 2%;
+}
+
+.back>img {
+    vertical-align: middle;
+}
+
+
+/* 搜索图标 */
+
+.input-box {
+    position: relative;
+}
+
+.input-box .search {
+    width: 100%;
+    height: 24px;
+    margin: 5px 0;
+    outline: none;
+    padding-left: 25px;
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.icon {
+    background-size: cover;
+    display: inline-block;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 4px;
+    background-color: transparent;
+}
+
+.icon-search {
+    background-image: url('../assets/search.png');
+}
+
+.icon-qrcode {
+    background-image: url('../assets/qrcode.png');
+}
+
+.icon-scan {
+    background-image: url('../assets/scan.png');
+}
+
+[v-cloak] {
+    display: none;
+}
+
+
+/* @media screen and (max-height: 410px) {
+    #app {
+        transform: scaleY(0.8);
+        transform-origin: left top;
+    }
+} */

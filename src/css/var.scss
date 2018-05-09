@@ -1,0 +1,49 @@
+$themeColor: #02bcae;
+$blueColor: #0099ff;
+$yellowBlueColor: #5f9200;
+$orangeColor: #ffcc33;
+$themeBtnColor: #35cabd;
+$whiteColor: #fff;
+$redColor: #f00;
+$grayColor: #d9d9d9;
+// $bgColor: #e5e5e5;
+// $bgColor: rgb(241, 239, 244);
+$bgColor: #eee;
+$radius: 6px;
+$blackColor: #333;
+.green {
+    color: $themeColor !important;
+}
+
+.blue {
+    color: $blueColor !important;
+}
+
+.yellow {
+    color: $yellowBlueColor !important
+}
+
+.orange {
+    color: $orangeColor !important;
+}
+
+.red {
+    color: $redColor !important;
+}
+
+.black {
+    color: $blackColor !important;
+}
+
+
+/* font style */
+
+$fontSize: 16px;
+
+/* button style */
+
+$btnHeight: 40px;
+
+/* nav style*/
+$navHeight: 50px;
+$navFontSize: 18px;
