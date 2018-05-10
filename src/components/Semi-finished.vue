@@ -110,6 +110,7 @@ export default {
           }
           this.tableData.unshift({
             resourceid: json.resourceId,
+            id: json.resourceId,
             piCiBianH: picibh,
             productName: json.produceName,
             picibianhName: json.planName,

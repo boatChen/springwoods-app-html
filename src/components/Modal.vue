@@ -62,7 +62,7 @@ export default {
   top: 0;
   left: 0;
   z-index: 999;
-  transition: transform .5s ease-in;
+  transition: transform .3s ease-in;
 }
 .header {
   line-height: 60px;
@@ -81,6 +81,6 @@ export default {
 }
 .m-slide-leave,
 .m-slide-enter-active {
-  transform: translateX(100%);
+  transform: translateX(0);
 }
 </style>
