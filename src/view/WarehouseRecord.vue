@@ -17,37 +17,58 @@
             <!-- tab-container -->
             <mt-tab-container v-model="selected">
                 <mt-tab-container-item id="1">
+                  <agri-load-more
+                    :begin="beginPage"
+                    :total="totalPage"
+                    :pullMessage="pullMessage"
+                    @loadMore="loadMore"
+                    >
                     <WareHouseItem class="data-box" 
                         v-for="(items,indexs) in storageData" 
                         :key="indexs" 
-                        :date="indexs" 
-                        :data="items" 
+                        :date.sync="indexs" 
+                        :data.sync="items" 
                         :status="status" 
                         :zhuangtai="zhuangtai"
                         :people="people"
                         :hour="hour"></WareHouseItem>
+                    </agri-load-more>
                 </mt-tab-container-item>
                 <mt-tab-container-item id="2">
+                  <agri-load-more
+                    :begin="beginPage"
+                    :total="totalPage"
+                    :pullMessage="pullMessage"
+                    @loadMore="loadMore1"
+                    >
                     <WareHouseItem class="data-box" 
                         v-for="(items,indexs) in storageData" 
                         :key="indexs" 
-                        :date="indexs" 
-                        :data="items" 
+                        :date.sync="indexs" 
+                        :data.sync="items" 
                         :status="status" 
                         :zhuangtai="zhuangtai"
                         :people="people"
                         :hour="hour"></WareHouseItem>
+                      </agri-load-more>
                 </mt-tab-container-item>
                 <mt-tab-container-item id="3">
+                  <agri-load-more
+                    :begin="beginPage"
+                    :total="totalPage"
+                    :pullMessage="pullMessage"
+                    @loadMore="loadMore2"
+                    >
                     <WareHouseItem class="data-box" 
                         v-for="(items,indexs) in storageData" 
                         :key="indexs" 
-                        :date="indexs" 
-                        :data="items" 
+                        :date.sync="indexs" 
+                        :data.sync="items" 
                         :status="status" 
                         :zhuangtai="zhuangtai"
                         :people="people"
                         :hour="hour"></WareHouseItem>
+                      </agri-load-more>
                 </mt-tab-container-item>
             </mt-tab-container>
         </div>
@@ -99,6 +120,7 @@ import FHeader from "@/components/Header";
 import WareHouseItem from "@/components/WareHouseItem";
 import SelectItems from "@/components/common/SelectItems";
 import weightpopup from "@/components/WeightPopup"
+import AgriLoadMore from "@/components/common/AgriLoadMore"
 Vue.component(Picker.name, Picker);
 Vue.component(DatetimePicker.name, DatetimePicker);
 Vue.component(Actionsheet.name, Actionsheet);
@@ -113,7 +135,8 @@ export default {
     Picker,
     WareHouseItem,
     SelectItems,
-    weightpopup
+    weightpopup,
+    AgriLoadMore
   },
   data() {
     return {
@@ -162,6 +185,10 @@ export default {
       endDate: cDate,
       sDateText: "开始时间",
       eDateText: "结束时间",
+      beginPage: 1,
+      pageSize: 10,
+      totalPage: 1,
+      pullMessage: "正在加载中",
 
       storageData: {},
       status: "首入库",
@@ -197,7 +224,9 @@ export default {
           batchno: this.batchno,
           startTime: this.NowStartTime,
           endTime: this.NowEndTime,
-          area: area
+          area: area,
+          beginPage: this.beginPage,
+          pageSize: this.pageSize
         };
       },
       set() {}
@@ -206,6 +235,7 @@ export default {
   watch: {
     selected: function() {
       this.isActive=false;
+      this.beginPage=1;
       if (this.selected == "1") {
         this.status = "首入库";
         this.zhuangtai = "入库：";
@@ -232,6 +262,8 @@ export default {
   },
   methods: {
     handleChange(obj) {
+      if(this.$refs.selectitems==null)
+        return;
       let value = obj[0];
       let dapenval = obj[1];
       if(obj.length>2){
@@ -277,7 +309,9 @@ export default {
       });
     },
     handleClick() {
+      this.beginPage =1;
       this.selectIn();
+      this.beginPage++
       this.isActive=true;
     //   querySemiWarehouseRecord(this.opt.value).then(res => {
     //     let result = res.data;
@@ -333,23 +367,28 @@ export default {
       }
       if (this.sDateText != "开始时间" && this.eDateText != "结束时间") {
         // if (this.opt.value == 0) {
+          this.beginPage = 1;
           this.selectIn(this.opt);
+          this.beginPage++;
         // } else if (this.opt.value == 1) {
           // this.selectOut(this.opt);
         // }
       }
     },
-    selectIn() {
-      this.storageData = {};
+    selectIn(clear) {
+      if (clear != "t") {
+        this.storageData = {};
+      }
       this.TotalWeight = 0;
       this.batchWeight = [];
       let weightobj = [];
       querySemiWarehouseRecord(this.opt).then(data => {
         if (data.data.resultCode == 1) {
+          this.$nextTick(()=>{
           let datalist = data.data.basePageObj.dataList;
           let weightList = data.data.dataList;
           this.TotalWeight = weightList.pop().total;
-          let obj = {};
+          this.totalPage = data.data.basePageObj.totalPages;
           datalist.forEach(item => {
             item.updationDate = item.updationDate.split(" ")[0];
             if (item.level == 1) {
@@ -357,10 +396,10 @@ export default {
             } else if (item.level == 2) {
               item["levelString"] = "B级果";
             }
-            if (obj[item.updationDate]) {
-              obj[item.updationDate].push(item);
+            if (this.storageData[item.updationDate]) {
+              this.storageData[item.updationDate].push(item);
             } else {
-              obj[item.updationDate] = [item];
+              this.storageData[item.updationDate] = [item];
             }
           });
           weightList.forEach(item => {
@@ -369,8 +408,10 @@ export default {
               weightobj.push(item.planNameTotal);
               this.batchWeight.push(weightobj);
           });
-          this.$nextTick(() => {
-            this.storageData = obj;
+          console.log(this.storageData);
+          // this.$nextTick(() => {
+            //this.storageData = obj;
+          // });
           });
         } else {
           Toast(this.opt.startTime+"-"+this.opt.endTime+" "+data.data.resultMsg);
@@ -397,10 +438,32 @@ export default {
           Toast(data.data.resultMsg);
         }
       });
+    },
+    loadMore() {
+      
+      if(this.selected==1){console.log("入库");
+        this.selectIn("t");
+        this.beginPage++;
+      }
+      
+    },
+    loadMore1() {
+      
+      if(this.selected==2){console.log("再入库");
+        this.selectIn("t");
+        this.beginPage++;
+      }
+    },
+    loadMore2() {
+      
+      if(this.selected==3){console.log("出库");
+        this.selectIn("t");
+        this.beginPage++;
+      }
     }
   },
   mounted() {
-    this.selectIn();
+    //this.selectIn();
   }
 };
 </script>

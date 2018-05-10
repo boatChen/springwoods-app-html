@@ -1,11 +1,11 @@
 <template>
     <div>
         <span class="data-box-span">
-            {{date}}
+            {{nowdate}}
         </span>
         <CardItrmSuffix 
             class="data-box-box" 
-            v-for="(item,index) in data" 
+            v-for="(item,index) in nowdata" 
             :key="index" 
             :topleft="item.planName" 
             :topright="status" 
@@ -33,7 +33,32 @@ export default {
         data:Array,
         people:String,
         hour:String
+    },
+    data(){
+        return {
+            nowdate:this.date,
+            nowdata:this.data
+        }
+    },
+    watch:{
+        date(val){
+            this.$emit('update:date', val)
+        },
+        data(val){
+            this.$emit('update:data', val)
+        }
+    },
+    mounted(){
+        console.log(this.data);
     }
+    // computed:{
+    //     date: {
+    //         get() {   
+    //             this.$emit('update:date', val)
+    //         },
+    //         set() {}
+    //         }
+    //     }
 }
 </script>
 <style scoped>

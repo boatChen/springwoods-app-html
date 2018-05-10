@@ -173,7 +173,7 @@ export function queryAuditStatusByAuditor(ops) {
 /** 查询我的申请列表 */
 export function queryAuditStatusByOper(ops) {
     let url = 'agriculture/semiFinishedEntry/queryAuditStatusByOper.do';
-    return Vue.axios.post(url, `pageSize=10&beginPage=1&complete=${ops.complete}`);
+    return Vue.axios.post(url, `pageSize=${ops.pageSize}&beginPage=${ops.beginPage}&complete=${ops.complete}`);
 }
 /** 查询审核详情 */
 export function queryEntryInfo(ops) {
@@ -199,12 +199,12 @@ export function finishedAuditEntry(opts) {
 /** 半成品出入库数据查询 */
 export function querySemiWarehouseRecord(ops) {
     let url = 'agriculture/semiFinishedEntry/queryEntryOutRecord.do';
-    return Vue.axios.post(url, `record=${ops.value}&startTime=${ops.startTime}&endTime=${ops.endTime}&batchno=${ops.batchno}&area=${ops.area}`);
+    return Vue.axios.post(url, `record=${ops.value}&startTime=${ops.startTime}&endTime=${ops.endTime}&batchno=${ops.batchno}&area=${ops.area}&beginPage=${ops.beginPage}&pageSize=${ops.pageSize}`);
 }
 /** 成品出入库数据查询 */
 export function queryWarehouseRecord(ops) {
     let url = 'agriculture/FinishedEntry/queryEntryOutRecord.do';
-    return Vue.axios.post(url, `record=${ops.value}&startTime=${ops.startTime}&endTime=${ops.endTime}&packingtype=${ops.packingtype}&batchno=${ops.batchno}&beginPage=1&pageSize=10`);
+    return Vue.axios.post(url, `record=${ops.value}&startTime=${ops.startTime}&endTime=${ops.endTime}&packingtype=${ops.packingtype}&batchno=${ops.batchno}&beginPage=${ops.beginPage}&pageSize=${ops.pageSize}`);
 }
 
 /** 查询所有归属地 */
@@ -231,5 +231,5 @@ export function finishedOut(opts) {
 /** 待入库记录查询 */
 export function queryWaitStorageRecord(ops) {
     let url = 'agriculture/todoEntry/queryTodoEntry.do';
-    return Vue.axios.post(url, `status=${ops.status}&startTime=${ops.startTime}&endTime=${ops.endTime}&batchno=${ops.batchno}&area=${ops.area}`);
+    return Vue.axios.post(url, `status=${ops.status}&startTime=${ops.startTime}&endTime=${ops.endTime}&batchno=${ops.batchno}&area=${ops.area}&beginPage=${ops.beginPage}&pageSize=${ops.pageSize}`);
 }

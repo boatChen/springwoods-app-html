@@ -9,6 +9,12 @@
                 </mt-navbar>
                 <mt-tab-container v-model="selected">
                     <mt-tab-container-item id="oper">
+                      <agri-load-more
+                        :begin="beginPage"
+                        :total="totalPage"
+                        @loadMore="loadMore"
+                        v-if="selected=='oper'"
+                        >
                           <CardItem v-for="(item,index) in applicationData" :key="index" 
                           :title="item.title"    
                           :titleClass="item.titleClass"
@@ -25,37 +31,45 @@
                           >
                           </CardItem>
 
-                            <div class="tip" v-if="applicationData.length == 0">
-                                <p>
-                                    暂无消息！
-                                </p>
-                            </div>
+                          <div class="tip" v-if="applicationData.length == 0">
+                              <p>
+                                  暂无消息！
+                              </p>
+                          </div>
+                      </agri-load-more>
                     </mt-tab-container-item>
                     <mt-tab-container-item id="review" >
-                            <CardItem 
-                              v-for="(item,index) in auditData" 
-                              :key="index"
-                              :title="item.title"
-                              :titleClass="item.titleClass"
-                              :topLeft="item.planName" 
-                              :topRight="item.grossweight + 'kg'" 
-                              :cLeft="item.levelName==null?item.packingType:item.levelName"                              
-                              :cRight="item.complete==3?item.specifications:null"
-                              :cRightClass="item.levelClass"
-                              :bLeft="'入库人：'+item.submitter" 
-                              :bRight="item.updationDate" 
-                              :bage="showBage"
-                              :bageContent="item.state"
-                              :bageClass="item.status=='1'?'red':item.status=='0'?'yellow':'green'"
-                              @click="handleClick(1,item)"                          
-                              >
-                            </CardItem>
-                          
-                            <div v-if="auditData.length==0 " class="tip">
-                                <p>
-                                    暂无消息！
-                                </p>
-                            </div>
+                      <agri-load-more
+                        :begin="beginPage"
+                        :total="totalPage"
+                        @loadMore="loadMoreReView"
+                         v-if="selected=='review'"
+                        >
+                          <CardItem 
+                            v-for="(item,index) in auditData" 
+                            :key="index"
+                            :title="item.title"
+                            :titleClass="item.titleClass"
+                            :topLeft="item.planName" 
+                            :topRight="item.grossweight + 'kg'" 
+                            :cLeft="item.levelName==null?item.packingType:item.levelName"                              
+                            :cRight="item.complete==3?item.specifications:null"
+                            :cRightClass="item.levelClass"
+                            :bLeft="'入库人：'+item.submitter" 
+                            :bRight="item.updationDate" 
+                            :bage="showBage"
+                            :bageContent="item.state"
+                            :bageClass="item.status=='1'?'red':item.status=='0'?'yellow':'green'"
+                            @click="handleClick(1,item)"                          
+                            >
+                          </CardItem>
+                        
+                          <div v-if="auditData.length==0 " class="tip">
+                              <p>
+                                  暂无消息！
+                              </p>
+                          </div>
+                        </agri-load-more>
                         <!-- </mt-cell> -->
                     </mt-tab-container-item>
                 </mt-tab-container>
@@ -93,6 +107,7 @@ Vue.component(TabContainerItem.name, TabContainerItem);
 Vue.component(Actionsheet.name, Actionsheet);
 import FHeader from "@/components/Header";
 import CardItem from "@/components/CardItem";
+import AgriLoadMore from "@/components/common/AgriLoadMore";
 function getStatus(status) {
   let title = "";
   switch (status) {
@@ -118,10 +133,10 @@ function getStatus(status) {
   return title;
 }
 export default {
-  name: "audit",
   components: {
     FHeader,
-    CardItem
+    CardItem,
+    AgriLoadMore
   },
   data() {
     return {
@@ -150,7 +165,9 @@ export default {
           method: this.deleteEntry
         }
       ],
-      item: {}
+      item: {},
+      beginPage: 1,
+      totalPage: 1
     };
   },
   methods: {
@@ -185,10 +202,10 @@ export default {
         id: this.item.id
       }).then(res => {
         if (res.data.resultCode == "1") {
-          Toast('成功取消申请');
-          setTimeout(()=>{
+          Toast("成功取消申请");
+          setTimeout(() => {
             this.requestApplicaiton();
-          },500)
+          }, 500);
         } else {
           Toast(res.data.resultMsg);
         }
@@ -235,13 +252,18 @@ export default {
       }
     },
     /* 请求我的申请数据 */
-    requestApplicaiton() {
+    requestApplicaiton(clear) {
       queryAuditStatusByOper({
-        complete: 4
+        complete: 4,
+        beginPage: this.beginPage,
+        pageSize: 10
       }).then(data => {
+        if (clear == true) {
+          this.applicationData = [];
+        }
         let _data = data.data;
         let dataList = _data.basePageObj.dataList;
-        this.applicationData = [];
+        this.totalPage = _data.basePageObj.totalPages;
         dataList.forEach(item => {
           let state =
             item.status == "0"
@@ -262,15 +284,18 @@ export default {
       });
     },
     /* 请求我的审核数据 */
-    requestReview() {
+    requestReview(clear) {
       // if (this.auditData.length != 0) return;
       queryAuditStatusByAuditor({
         complete: 4
       }).then(data => {
-        this.auditData = [];
+        if (clear == true) {
+          this.auditData = [];
+        }
         let _data = data.data;
         console.log(_data);
         let dataList = _data.basePageObj.dataList;
+        this.totalPage = _data.basePageObj.totalPages;
         dataList.forEach(item => {
           let state =
             item.status == "0"
@@ -290,30 +315,52 @@ export default {
         });
         console.log(this.auditData);
       });
+    },
+    loadMore() {
+      if (this.selected === "review") {
+        console.log('return')
+        //我的审核
+        return;
+      } else if (this.selected === "oper") {
+        //我的申请
+        this.requestApplicaiton();
+        this.beginPage++;
+      }
+    },
+    loadMoreReView() {
+      if (this.selected === "review") {
+        console.log('ssss')
+        //我的审核
+        this.requestReview();
+        this.beginPage++;
+      } else if (this.selected === "oper") {
+        return;
+      }
     }
   },
   mounted() {
     // this.requestApplicaiton();
   },
-  activated() {
-    if (this.selected === "review") {
-      //我的审核
-      this.requestReview();
-    } else if (this.selected === "oper") {
-      //我的申请
-      this.requestApplicaiton();
-    }
-    console.log("activated");
-  },
+  // activated() {
+  // if (this.selected === "review") {
+  //   //我的审核
+  //   this.requestReview();
+  // } else if (this.selected === "oper") {
+  //   //我的申请
+  //   this.requestApplicaiton();
+  // }
+  // console.log("activated");
+  // },
   watch: {
     selected: function(val, oldVal) {
+      this.beginPage = 1;
       console.log(val);
       if (val === "review") {
         //我的审核
-        this.requestReview();
+        this.requestReview(true);
       } else if (val === "oper") {
         //我的申请
-        this.requestApplicaiton();
+        this.requestApplicaiton(true);
       }
     }
   }
