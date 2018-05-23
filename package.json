@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "fastclick": "^1.0.6",
+    "fundebug-javascript": "^1.0.3",
     "mint-ui": "^2.2.13",
     "moment": "^2.22.1",
     "vue": "^2.5.2",
