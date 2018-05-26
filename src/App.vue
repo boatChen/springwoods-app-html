@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <transition :name="transitionName" mode="out-in">
+    <transition :name="transitionName">
       <keep-alive include="audit">
-        <router-view class="child-view" name='Home'></router-view>      
+        <router-view class="child-view" name='Home' style="position: absolute;"></router-view>      
        </keep-alive>      
     </transition>
   </div>
@@ -62,19 +62,25 @@ $tran: 60px;
 .child-view {
   width: 100%;
   height: 100%;
-  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: all 0.4s ease-out;
 }
 .slide-left-enter,
 .slide-right-leave-active {
-  opacity: 0;
-  -webkit-transform: translate($tran, 0);
-  transform: translate($tran, 0);
+  // opacity: 1;
+  // -webkit-transform: translate(100%, 0);
+  // transform: translate(100%, 0);
+  -webkit-transform:translate3d(100%,0,0);
+  transform:translate3d(100%,0,0)
 }
 .slide-left-leave-active,
 .slide-right-enter {
-  opacity: 0;
-  -webkit-transform: translate(-$tran, 0);
-  transform: translate(-$tran, 0);
+  // opacity: 1;
+  // // -webkit-transform: translate(-$tran, 0);
+  // -webkit-transform: translate(-100%, 0);
+  // // transform: translate(-$tran, 0);
+  // transform: translate(-100%, 0);
+  -webkit-transform:translate3d(-100%,0,0);
+  transform:translate3d(-100%,0,0)
 }
 $scale: 1.1;
 .scale-left-enter,

@@ -59,9 +59,9 @@
             </div>
         </div>
         <modal @close="close" @scanQRCode="scanQRCode" v-if="scan"></modal> -->
-        <transition :name="transitionName" mode="out-in">
+        <transition :name="transitionName" >
           <keep-alive include="audit">
-            <router-view class="child-view" name='Home'></router-view>      
+            <router-view class="child-view" name='Home' style="position: absolute;"></router-view>      
           </keep-alive>      
         </transition>
         <mt-tabbar :fixed="true" v-model="selected">
