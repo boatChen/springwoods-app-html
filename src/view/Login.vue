@@ -9,7 +9,7 @@
         <div ref="inputbox" class="form-input"><input type="text" ref="userinput" v-model="userid" v-autofocus placeholder="请扫描二维码登录"></div>
         <i @click="showScan" style="right: 0;width: 24px;height: 24px;" class="icon icon-scan"></i>
       </div>
-        <agri-button @click="login">登录</agri-button>
+        <agri-button @click="loginBtn">登录</agri-button>
     </div>
     <modal @close="close" @scanQRCode="scanQRCode" v-if="scan"></modal>
     <footer class="footer">出入库管理系统{{version}} <br>&copy;春沐源农业有限公司</footer>
@@ -19,6 +19,7 @@
 
 <script>
 import Vue from "vue";
+import { mapActions,mapGetters } from 'vuex';
 import { Toast } from "mint-ui";
 import { fetchLogin } from "../fetch/api";
 import AgriButton from "@/components/common/AgriButton";
@@ -36,7 +37,12 @@ export default {
       version: ""
     };
   },
+  computed: {
+    ...mapGetters(['loginData'])
+  },
   methods: {
+    ...mapActions(['login']),
+    
     showScan() {
       this.scan = true;
     },
@@ -47,14 +53,15 @@ export default {
       this.handleInput(value.split(":")[1]);
       this.scan = false;
     },
-    login() {
+    loginBtn() {
       this.handleInput(this.userid);
     },
-    handleInput(code) {
-      fetchLogin({
+    async handleInput(code) {
+      await this.login({
         id: code
-      }).then(data => {
-        let obj = data.data;
+      });
+      
+      let obj = this.loginData;
         if (obj.resultCode == "1") {
           sessionStorage.setItem("token", obj.resultObj.loginedtoken);
           this.username = obj.resultObj.opername;
@@ -68,7 +75,24 @@ export default {
           this.isLogin = false;
         }
         this.$refs.userinput.blur();
-      });
+      // fetchLogin({
+      //   id: code
+      // }).then(data => {
+      //   let obj = data.data;
+      //   if (obj.resultCode == "1") {
+      //     sessionStorage.setItem("token", obj.resultObj.loginedtoken);
+      //     this.username = obj.resultObj.opername;
+      //     sessionStorage.setItem("id", code);
+      //     sessionStorage.setItem("username", this.username);
+      //     this.$router.push("/In/semistock");
+      //   } else {
+      //     Toast(obj.resultMsg);
+      //     this.userid = "";
+      //     this.username = "";
+      //     this.isLogin = false;
+      //   }
+      //   this.$refs.userinput.blur();
+      // });
     },
     documentBind() {
       let _this = this;
